@@ -10,14 +10,24 @@ const App = () => {
         { id: 2, name: "Watch Movie" },
     ]);
 
-    const name = "Alan Le";
-    const age = 18;
-    const data = {
-        address: "Quang Ninh",
-        country: "Vietnam",
-    };
+    /**
+     * Generates a random integer between the specified minimum and maximum values, inclusive.
+     *
+     * @param {number} min - The minimum integer value (inclusive).
+     * @param {number} max - The maximum integer value (inclusive).
+     * @returns {number} A random integer between min and max, inclusive.
+     */
+    const randomIntFromInterval = (min, max) => { // min and max included 
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+
     const addNewTodo = (name) => {
-        alert(`call me  ${name}`);
+        const newTodo = {
+            id: randomIntFromInterval(1, 1000000), // Random ID
+            name: name,
+        }
+
+        setTodoList([...todoList, newTodo]);
     };
 
     return (
@@ -27,9 +37,6 @@ const App = () => {
                 addNewTodo={addNewTodo}
             />
             <TodoData
-                name={name}
-                age={age}
-                data={data}
                 todoList={todoList}
             />
 

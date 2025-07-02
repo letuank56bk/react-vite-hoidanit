@@ -6,7 +6,7 @@ const TodoNew = (props) => {
     const { addNewTodo } = props;
     // addNewTodo("Alan Le");
     const handleClick = () => {
-        console.log("handleClick", valueInput);
+        addNewTodo(valueInput);
     }
 
     const handleOnChange = (name) => {
