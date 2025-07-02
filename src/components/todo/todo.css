@@ -33,7 +33,13 @@
     margin-top: 15px; 
 }
 
-
+.todo-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
 
 .logo {
   height: 6em;
