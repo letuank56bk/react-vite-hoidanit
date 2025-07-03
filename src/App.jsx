@@ -5,10 +5,7 @@ import reactLogo from "./assets/react.svg";
 import { useState } from "react";
 
 const App = () => {
-    const [todoList, setTodoList] = useState([
-        { id: 1, name: "Learn ReactJS" },
-        { id: 2, name: "Watch Movie" },
-    ]);
+    const [todoList, setTodoList] = useState([]);
 
     /**
      * Generates a random integer between the specified minimum and maximum values, inclusive.
