@@ -18,6 +18,12 @@ const App = () => {
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
 
+    /**
+     * Adds a new todo item to the todo list.
+     *
+     * @param {string} name - The name or description of the new todo item.
+     * @returns {void}
+     */
     const addNewTodo = (name) => {
         const newTodo = {
             id: randomIntFromInterval(1, 1000000), // Random ID
@@ -26,6 +32,17 @@ const App = () => {
 
         setTodoList([...todoList, newTodo]);
     };
+
+    /**
+     * Deletes a todo item from the todo list by its unique id.
+     *
+     * @param {number|string} id - The unique identifier of the todo item to be deleted.
+     */
+    const deleteTodo = (id) => {
+        const newTodo = todoList.filter(item => item.id !== id); // Filter out the todo with the specified id
+        // Update the todoList state with the new array
+        setTodoList(newTodo);
+    }
 
     return (
         <div className="todo-container">
@@ -36,6 +53,7 @@ const App = () => {
             {todoList.length > 0 ?
                 <TodoData
                     todoList={todoList}
+                    deleteTodo={deleteTodo}
                 />
                 :
                 todoList.length === 0 &&
