@@ -1,21 +1,26 @@
 import { Input, notification } from 'antd';
 import { Modal } from 'antd';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createUserAPI } from '../../services/api.service';
 
-
 const UpdateModalUser = (props) => {
-    const { loadUser } = props;
-
-    const [isModalOpen, setIsModalOpen] = useState(true);
+    const { loadUser, isModalUpdateOpen, setIsModalUpdateOpen, dataUpdate, setDataUpdate } = props;
 
     const [fullName, setFullName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [id, setId] = useState('');
     const [phone, setPhone] = useState('');
 
+    // This effect runs when the modal opens or when dataUpdate changes
+    useEffect(() => {
+        if (dataUpdate) {
+            setId(dataUpdate._id);
+            setFullName(dataUpdate.fullName);;
+            setPhone(dataUpdate.phone);
+        }
+    }, [dataUpdate]);
+
     const handleSubmitBtn = async () => {
-        const res = await createUserAPI(fullName, email, password, phone);
+        const res = await createUserAPI(fullName, password, phone);
         if (res.data) {
             notification.success({
                 message: "Create user",
@@ -33,16 +38,18 @@ const UpdateModalUser = (props) => {
 
     const resetAndCloseModal = () => {
         setFullName('');
-        setEmail('');
-        setPassword('');
         setPhone('');
-        setIsModalOpen(false);
+        setId('');
+        setIsModalUpdateOpen(false);
+        // Cần reset biến setDataUpdate để tránh lỗi khi mở modal lần sau (dataUpdate vẫn giữ giá trị cũ)
+        setDataUpdate(null);
     }
+
     return (
         <Modal
             title="Update User"
             closable={{ 'aria-label': 'Custom Close Button' }}
-            open={isModalOpen}
+            open={isModalUpdateOpen}
             onOk={() => handleSubmitBtn()}
             onCancel={() => resetAndCloseModal()}
             maskClosable={false} // Prevent closing by clicking outside the modal
@@ -50,23 +57,14 @@ const UpdateModalUser = (props) => {
         >
             <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
                 <div>
+                    <span>Id</span>
+                    <Input value={id} disabled />
+                </div>
+                <div>
                     <span>Full name</span>
                     <Input
                         value={fullName}
                         onChange={(e) => { setFullName(e.target.value) }} />
-                </div>
-                <div>
-                    <span>Email</span>
-                    <Input
-                        value={email}
-                        onChange={(e) => { setEmail(e.target.value) }} />
-                </div>
-                <div>
-                    <span>Password</span>
-                    <Input.Password
-                        value={password}
-                        onChange={(e) => { setPassword(e.target.value) }}
-                    />
                 </div>
                 <div>
                     <span>Phone number</span>
