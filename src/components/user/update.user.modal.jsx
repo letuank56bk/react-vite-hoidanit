@@ -1,7 +1,7 @@
 import { Input, notification } from 'antd';
 import { Modal } from 'antd';
 import { useEffect, useState } from 'react';
-import { createUserAPI } from '../../services/api.service';
+import { updateUserAPI } from '../../services/api.service';
 
 const UpdateModalUser = (props) => {
     const { loadUser, isModalUpdateOpen, setIsModalUpdateOpen, dataUpdate, setDataUpdate } = props;
@@ -20,17 +20,17 @@ const UpdateModalUser = (props) => {
     }, [dataUpdate]);
 
     const handleSubmitBtn = async () => {
-        const res = await createUserAPI(fullName, password, phone);
+        const res = await updateUserAPI(id, fullName, phone);
         if (res.data) {
             notification.success({
-                message: "Create user",
-                description: "Tạo user thành công",
+                message: "Update user",
+                description: "Cập nhật thành công",
             })
             resetAndCloseModal(); // Reset form fields and close modal
-            // await loadUser(); // Reload user data
+            await loadUser(); // Reload user data
         } else {
             notification.error({
-                message: "Error create user",
+                message: "Error update user",
                 description: JSON.stringify(res.message),
             });
         }
