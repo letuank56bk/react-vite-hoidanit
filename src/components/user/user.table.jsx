@@ -1,8 +1,9 @@
-import { Table } from 'antd';
+import { Table, Popconfirm, notification } from 'antd';
 import { useState } from 'react';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import UserUpdateModal from './update.user.modal';
 import ViewUserDetail from './view.user.detail';
+import { deleteUserAPI } from '../../services/api.service';
 
 const UserTable = (props) => {
     const { dataUser, loadUser } = props;
@@ -12,6 +13,21 @@ const UserTable = (props) => {
     const [isDetailOpen, setIsDetailOpen] = useState(false);
     const [dataDetail, setDataDetail] = useState();
 
+    const handleDeleteUser = async (_id) => {
+        const res = await deleteUserAPI(_id);
+        if (res.data) {
+            notification.success({
+                message: "Delete user",
+                description: "Xóa user thành công",
+            });
+            await loadUser(); // Reload user data
+        } else {
+            notification.error({
+                message: "Error delete user",
+                description: JSON.stringify(res.message),
+            });
+        }
+    }
     const columns = [
         {
             title: 'Id',
@@ -45,7 +61,16 @@ const UserTable = (props) => {
                                 setDataUpdate(record);
                                 setIsModalUpdateOpen(true);
                             }} />
-                        <DeleteOutlined style={{ cursor: "pointer", color: "red" }} />
+                        <Popconfirm
+                            placement="left"
+                            title="Xóa người dùng"
+                            description="Bạn có chắc chắn muốn xóa người dùng này không?"
+                            okText="Yes"
+                            cancelText="No"
+                            onConfirm={() => handleDeleteUser(record._id)}
+                        >
+                            <DeleteOutlined style={{ cursor: "pointer", color: "red" }} />
+                        </Popconfirm>
                     </div>
                 )
             },
