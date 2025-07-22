@@ -1,7 +1,23 @@
 import { Button, Drawer } from "antd";
+import { useState } from "react";
 
 const ViewUserDetail = (props) => {
     const { isDetailOpen, setIsDetailOpen, dataDetail, setDataDetail } = props;
+    const [selectedFile, setSelectedFile] = useState()
+    const [preview, setPreview] = useState()
+
+    const handleOnChangeFile = (event) => {
+        if (!event.target.files || event.target.files.length === 0) {
+            return
+        }
+        const file = event.target.files[0];
+        if (file) {
+            setSelectedFile(file);
+            setPreview(URL.createObjectURL(file));
+        }
+    }
+    console.log(">>> check file:", preview);
+
 
     return (
         <Drawer
@@ -24,8 +40,9 @@ const ViewUserDetail = (props) => {
                 <p>Phone: {dataDetail.phone}</p>
                 <br />
                 <p>Avatar:</p>
-                <div>
-                    <img height={"100"} width={"150"} src={`${import.meta.env.VITE_BACKEND_URL}/images/avatar/${dataDetail.avatar}`} />
+                <div style={{ marginTop: '10px', height: '100px', width: '150px', border: '1px solid #ccc' }}>
+                    <img style={{ height: '100%', width: '100%', objectFit: 'contain' }}
+                        src={`${import.meta.env.VITE_BACKEND_URL}/images/avatar/${dataDetail.avatar}`} />
                 </div>
                 <div>
                     <label
@@ -40,7 +57,12 @@ const ViewUserDetail = (props) => {
                             cursor: 'pointer'
                         }}>
                         Upload Avatar</label>
-                    <input type="file" id="btnUpload" hidden />
+                    <input type="file" id="btnUpload" hidden onChange={(event) => { handleOnChangeFile(event) }} />
+                </div>
+
+                <div style={{ marginTop: '10px', height: '100px', width: '150px' }}>
+                    <img style={{ height: '100%', width: '100%', objectFit: 'contain' }}
+                        src={preview} />
                 </div>
             </> :
                 <><p>Không có dữ liệu...</p></>
