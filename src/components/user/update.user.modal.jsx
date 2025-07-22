@@ -14,7 +14,7 @@ const UpdateModalUser = (props) => {
     useEffect(() => {
         if (dataUpdate) {
             setId(dataUpdate._id);
-            setFullName(dataUpdate.fullName);;
+            setFullName(dataUpdate.fullName);
             setPhone(dataUpdate.phone);
         }
     }, [dataUpdate]);
