@@ -1,8 +1,10 @@
-import { Button, Drawer } from "antd";
+import { Button, Drawer, notification } from "antd";
 import { useState } from "react";
+import { handleUploadFile } from "../../services/api.service";
+import { updateUserAvatarAPI } from "../../services/api.service";
 
 const ViewUserDetail = (props) => {
-    const { isDetailOpen, setIsDetailOpen, dataDetail, setDataDetail } = props;
+    const { isDetailOpen, setIsDetailOpen, dataDetail, setDataDetail, loadUser } = props;
     const [selectedFile, setSelectedFile] = useState()
     const [preview, setPreview] = useState()
 
@@ -16,7 +18,40 @@ const ViewUserDetail = (props) => {
             setPreview(URL.createObjectURL(file));
         }
     }
-    console.log(">>> check file:", preview);
+
+    const handleUpdateAvatar = async () => {
+        // Step 1: upload file
+        const resUpload = await handleUploadFile(selectedFile, 'avatar');
+        if (resUpload.data) {
+            const newAvatar = resUpload.data.fileUploaded; // fileUploaded is the key that response from backend
+            const resUpdateAvatar = await updateUserAvatarAPI(newAvatar, dataDetail._id, dataDetail.fullName, dataDetail.phone);
+            if (resUpdateAvatar.data) {
+                setIsDetailOpen(false); // Close the drawer
+                setDataDetail(null); // Clear the dataDetail
+                setSelectedFile(null); // Clear the selected file
+                await loadUser(); // Reload user data
+
+                notification.success({
+                    message: 'Success',
+                    description: 'Update avatar successfully!'
+                });
+            } else {
+                notification.error({
+                    message: 'Error',
+                    description: JSON.stringify(resUpdateAvatar.message || 'Failed to update avatar')
+                });
+            }
+        } else {
+            notification.error({
+                message: 'Error',
+                description: JSON.stringify(resUpload.message || 'Failed to upload file')
+            });
+            return;
+        }
+
+        // Step 2: call API to update user avatar
+
+    }
 
 
     return (
@@ -59,11 +94,18 @@ const ViewUserDetail = (props) => {
                         Upload Avatar</label>
                     <input type="file" id="btnUpload" hidden onChange={(event) => { handleOnChangeFile(event) }} />
                 </div>
+                {preview &&
+                    <>
+                        <div style={{ marginTop: '10px', marginBottom: '15px', height: '100px', width: '150px' }}>
+                            <img style={{ height: '100%', width: '100%', objectFit: 'contain' }}
+                                src={preview} />
+                        </div>
+                        <Button type="primary"
+                            onClick={() => { handleUpdateAvatar() }}
+                        >Save</Button>
+                    </>
+                }
 
-                <div style={{ marginTop: '10px', height: '100px', width: '150px' }}>
-                    <img style={{ height: '100%', width: '100%', objectFit: 'contain' }}
-                        src={preview} />
-                </div>
             </> :
                 <><p>Không có dữ liệu...</p></>
             }
