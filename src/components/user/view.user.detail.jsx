@@ -35,6 +35,7 @@ const ViewUserDetail = (props) => {
                     message: 'Success',
                     description: 'Update avatar successfully!'
                 });
+3
             } else {
                 notification.error({
                     message: 'Error',
