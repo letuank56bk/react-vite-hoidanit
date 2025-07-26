@@ -6,13 +6,25 @@ import { useState, useEffect } from 'react';
 const UserPage = () => {
     const [dataUser, setDataUser] = useState([]);
 
+    // Pagination state
+    const [current, setCurrent] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+    const [total, setTotal] = useState(0);
+
     useEffect(() => {
         loadUser();
     }, []);
 
     const loadUser = async () => {
-        const res = await fetchAllUsersAPI();
-        setDataUser(res.data);
+        const res = await fetchAllUsersAPI(current, pageSize);
+        if (res.data) {
+            setDataUser(res.data.result);
+            setCurrent(res.data.meta.current);
+            setPageSize(res.data.meta.pageSize);
+            setTotal(res.data.meta.total);
+        } else {
+            console.error("Failed to fetch users:", res.message);
+        }
     }
 
     return (
@@ -22,6 +34,11 @@ const UserPage = () => {
             <UserTable
                 dataUser={dataUser}
                 loadUser={loadUser}
+                current={current}
+                pageSize={pageSize}
+                total={total}
+                setCurrent={setCurrent}
+                setPageSize={setPageSize}
             />
         </div>
     )
