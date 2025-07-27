@@ -34,7 +34,7 @@ const UserTable = (props) => {
             render: (_, record, index) => {
                 return (
                     <>
-                        <span>{index + 1}</span>
+                        <span>{(index + 1) + (current - 1) * pageSize}</span>
                     </>
                 )
             }
@@ -88,7 +88,18 @@ const UserTable = (props) => {
     ];
 
     const onChange = (pagination, filters, sorter, extra) => {
-        console.log('>>>> Check', pagination, filters, sorter, extra);
+        // Update table based on current page
+        if (pagination && pagination.current) {
+            if (pagination.current !== +current) {
+                setCurrent(+pagination.current); // Add '+' to convert string to number '5' -> 5
+            }
+        }
+        // Update table size based on page size
+        if (pagination && pagination.pageSize) {
+            if (pagination.pageSize !== +pageSize) {
+                setPageSize(+pagination.pageSize); // Add '+' to convert string to number '5' -> 5
+            }
+        }
     }
 
     return (

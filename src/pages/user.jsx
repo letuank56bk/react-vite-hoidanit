@@ -13,7 +13,7 @@ const UserPage = () => {
 
     useEffect(() => {
         loadUser();
-    }, []);
+    }, [current, pageSize]); // Anytime current or pageSize changes, loadUser will be called
 
     const loadUser = async () => {
         const res = await fetchAllUsersAPI(current, pageSize);
