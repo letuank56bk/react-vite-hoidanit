@@ -1,13 +1,27 @@
-import { Input, Button, Form, notification, Row, Col, Divider } from 'antd';
-import { Link } from 'react-router-dom';
-import { registerUserAPI } from '../services/api.service';
+import { Input, Button, Form, notification, Row, Col, Divider, message } from 'antd';
+import { Link, useNavigate } from 'react-router-dom';
+import { loginAPI } from '../services/api.service';
 import { ArrowRightOutlined } from '@ant-design/icons';
+import { useState } from 'react';
 
 const LoginPage = () => {
     const [form] = Form.useForm();
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     const onFinish = async (values) => {
-        console.log('Login values:', values);
+        setLoading(true);
+        const res = await loginAPI(values.email, values.password);
+        if (res.data) {
+            message.success('Đăng nhập thành công!');
+            navigate('/'); // Redirect to home page after successful login
+        } else {
+            notification.error({
+                message: 'Đăng nhập thất bại',
+                description: JSON.stringify(res.message) || 'Vui lòng kiểm tra lại thông tin đăng nhập của bạn.',
+            });
+        }
+        setLoading(false);
     }
 
 
@@ -53,7 +67,7 @@ const LoginPage = () => {
                                 justifyContent: 'space-between',
                                 alignItems: 'center'
                             }}>
-                                <Button type="primary" onClick={() => { form.submit() }}>Login</Button>
+                                <Button loading={loading} type="primary" onClick={() => { form.submit() }}>Login</Button>
                                 <Link to={'/'}>Go to home page <ArrowRightOutlined /></Link>
                             </div>
                         </Form.Item>
