@@ -2,23 +2,29 @@ import { Input, Button, Form, notification, Row, Col, Divider, message } from 'a
 import { Link, useNavigate } from 'react-router-dom';
 import { loginAPI } from '../services/api.service';
 import { ArrowRightOutlined } from '@ant-design/icons';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+import { AuthContext } from '../components/context/auth.context';
 
 const LoginPage = () => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
+    // Access the user and setUser from AuthContext (Global State)
+    const { user, setUser } = useContext(AuthContext);
+
     const onFinish = async (values) => {
         setLoading(true);
         const res = await loginAPI(values.email, values.password);
         if (res.data) {
             message.success('Đăng nhập thành công!');
+            localStorage.setItem('access_token', res.data.access_token); // Store access token in local storage
+            setUser(res.data.user); // Update user context with the logged-in user data
             navigate('/'); // Redirect to home page after successful login
         } else {
             notification.error({
                 message: 'Đăng nhập thất bại',
-                description: JSON.stringify(res.message) || 'Vui lòng kiểm tra lại thông tin đăng nhập của bạn.',
+                description: JSON.stringify(res.message),
             });
         }
         setLoading(false);

@@ -1,10 +1,14 @@
-import { Link, NavLink } from 'react-router-dom';
-import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useState, useContext } from 'react';
 import { Menu } from 'antd';
 import { HomeOutlined, UsergroupAddOutlined, BookOutlined, SettingOutlined } from '@ant-design/icons';
+import { AuthContext } from '../context/auth.context';
 
 const Header = () => {
     const [current, setCurrent] = useState('');
+    const { user } = useContext(AuthContext);
+
+    console.log("User data in Header:", user);
 
     const items = [
         {
