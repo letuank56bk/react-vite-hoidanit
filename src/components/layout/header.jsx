@@ -1,14 +1,12 @@
 import { Link } from 'react-router-dom';
 import { useState, useContext } from 'react';
 import { Menu } from 'antd';
-import { HomeOutlined, UsergroupAddOutlined, BookOutlined, SettingOutlined } from '@ant-design/icons';
+import { HomeOutlined, UsergroupAddOutlined, BookOutlined, SettingOutlined, LoginOutlined, AliwangwangOutlined } from '@ant-design/icons';
 import { AuthContext } from '../context/auth.context';
 
 const Header = () => {
     const [current, setCurrent] = useState('');
     const { user } = useContext(AuthContext);
-
-    console.log("User data in Header:", user);
 
     const items = [
         {
@@ -26,21 +24,26 @@ const Header = () => {
             key: 'books',
             icon: <BookOutlined />,
         },
-        {
-            label: 'Cài đặt',
+        // Conditional rendering based on user authentication
+        // if user.id is not set, show login link
+        ...(!user.id ? [{
+            label: <Link to={"/login"}>Đăng nhập</Link>,
+            key: 'login',
+            icon: <LoginOutlined />,
+        }] : []),
+
+        ...(user.id ? [{
+            label: `Welcome ${user.fullName}`,
             key: 'setting',
-            icon: <SettingOutlined />,
+            icon: <AliwangwangOutlined />,
             children: [
-                {
-                    label: <Link to={"/login"}>Đăng nhập</Link>,
-                    key: 'login',
-                },
                 {
                     label: 'Đăng xuất',
                     key: 'logout',
                 },
             ],
-        },
+        },] : []),
+
     ];
 
     const onClick = e => {
