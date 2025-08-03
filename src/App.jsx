@@ -4,9 +4,10 @@ import { Outlet } from "react-router-dom";
 import { getAccountAPI } from "./services/api.service";
 import { useEffect, useContext } from "react";
 import { AuthContext } from "./components/context/auth.context";
+import { Spin } from "antd";
 
 const App = () => {
-    const { user, setUser } = useContext(AuthContext);
+    const { user, setUser, isAppLoading, setIsAppLoading } = useContext(AuthContext);
 
     console.log('User data from context in App begin:', user);
 
@@ -18,17 +19,24 @@ const App = () => {
         const res = await getAccountAPI();
         if (res.data) {
             setUser(res.data.user); // Update user context with the fetched user data
-            console.log('User data fetched successfully:', res.data);
-            console.log('User data from context after:', user);
         }
+        setIsAppLoading(false); // Set loading to false after fetching user data
     }
 
     return (
-        <>
-            <Header />
-            <Outlet />
-            <Footer />
-        </>
+        <div>
+            {isAppLoading === true ?
+                <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+                    <Spin />
+                </div>
+                :
+                <>
+                    <Header />
+                    <Outlet />
+                    <Footer />
+                </>
+            }
+        </div>
     )
 }
 
