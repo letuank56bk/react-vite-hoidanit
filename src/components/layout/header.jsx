@@ -47,7 +47,6 @@ const Header = () => {
     ];
 
     const onClick = e => {
-        console.log('click ', e);
         setCurrent(e.key);
     };
 

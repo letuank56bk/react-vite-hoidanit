@@ -4,8 +4,7 @@ const MyComponent = () => {
     const hoidanit = "Alan check 1";
     return (
         <>
-            <div>{hoidanit} - CTTV</div>
-            <div>{console.log("Check function in HTML")}</div>
+            <div>{hoidanit}</div>
             <div className="child"
                 style={{ color: 'blue', fontSize: '20px' }}
             > Child </div>
