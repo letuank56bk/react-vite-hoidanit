@@ -9,8 +9,6 @@ import { Spin } from "antd";
 const App = () => {
     const { user, setUser, isAppLoading, setIsAppLoading } = useContext(AuthContext);
 
-    console.log('User data from context in App begin:', user);
-
     useEffect(() => {
         fetchUserInfo();
     }, []);

@@ -87,6 +87,12 @@ const logoutAPI = () => {
     return axios.post(URL_BACKEND); // Token đã được gán vào header trong axios.customize.js
 }
 
+// ==========================================================================================
+const fetchAllBooksAPI = (current, pageSize) => {
+    const URL_BACKEND = `/api/v1/book?current=${current}&pageSize=${pageSize}`;
+    return axios.get(URL_BACKEND);
+}
+
 export {
     createUserAPI,
     updateUserAPI,
@@ -98,4 +104,5 @@ export {
     loginAPI,
     getAccountAPI,
     logoutAPI,
+    fetchAllBooksAPI,
 }
