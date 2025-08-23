@@ -1,4 +1,5 @@
 import BookTable from "../components/book/book.table";
+import BookForm from "../components/book/book.form";
 import { fetchAllBooksAPI } from '../services/api.service';
 import { useState, useEffect } from 'react';
 
@@ -8,6 +9,8 @@ const BookPage = () => {
     const [current, setCurrent] = useState(1);
     const [pageSize, setPageSize] = useState(5);
     const [total, setTotal] = useState(0);
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         loadBook();
@@ -27,6 +30,11 @@ const BookPage = () => {
 
     return (
         <div style={{ padding: '20px' }}>
+            <BookForm
+                loadBook={loadBook}
+                isModalOpen={isModalOpen}
+                setIsModalOpen={setIsModalOpen}
+            />
             <BookTable
                 dataBook={dataBook}
                 loadBook={loadBook}

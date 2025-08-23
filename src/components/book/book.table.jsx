@@ -1,8 +1,12 @@
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Table, Popconfirm, notification } from 'antd';
+import ViewBookDetail from './view.book.detail';
+import { useState } from 'react';
 
 const BookTable = (props) => {
     const { dataBook, loadBook, current, pageSize, total, setCurrent, setPageSize } = props;
+    const [isDetailOpen, setIsDetailOpen] = useState(false);
+    const [dataDetail, setDataDetail] = useState();
 
     const formatter = new Intl.NumberFormat('vi-VN', {
         style: 'currency',
@@ -24,7 +28,12 @@ const BookTable = (props) => {
             title: 'Id',
             dataIndex: '_id',
             render: (_, record) => {
-                return <a>{record._id}</a>;
+                return <a
+                    onClick={() => {
+                        setDataDetail(record);
+                        setIsDetailOpen(true);
+                    }}
+                >{record._id}</a>;
             }
         },
         {
@@ -105,6 +114,13 @@ const BookTable = (props) => {
                         showTotal: (total, range) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
                     }}
                 onChange={onChange}
+            />
+            <ViewBookDetail
+                isDetailOpen={isDetailOpen}
+                setIsDetailOpen={setIsDetailOpen}
+                dataDetail={dataDetail}
+                setDataDetail={setDataDetail}
+                formatter={formatter}
             />
         </>
     );

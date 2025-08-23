@@ -35,7 +35,7 @@ const ViewUserDetail = (props) => {
                     message: 'Success',
                     description: 'Update avatar successfully!'
                 });
-3
+                3
             } else {
                 notification.error({
                     message: 'Error',
@@ -49,11 +49,8 @@ const ViewUserDetail = (props) => {
             });
             return;
         }
-
         // Step 2: call API to update user avatar
-
     }
-
 
     return (
         <Drawer
@@ -110,7 +107,6 @@ const ViewUserDetail = (props) => {
             </> :
                 <><p>Không có dữ liệu...</p></>
             }
-
         </Drawer>
     )
 }
