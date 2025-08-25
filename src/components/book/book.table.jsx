@@ -1,12 +1,19 @@
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import { Table, Popconfirm, notification } from 'antd';
+import { Table, Popconfirm } from 'antd';
+import BookForm from './book.form';
 import ViewBookDetail from './view.book.detail';
 import { useState } from 'react';
 
 const BookTable = (props) => {
     const { dataBook, loadBook, current, pageSize, total, setCurrent, setPageSize } = props;
+
+    // Drawer state and data to control detail visibility
     const [isDetailOpen, setIsDetailOpen] = useState(false);
     const [dataDetail, setDataDetail] = useState();
+
+    // Modal state to control form visibility
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
 
     const formatter = new Intl.NumberFormat('vi-VN', {
         style: 'currency',
@@ -101,6 +108,11 @@ const BookTable = (props) => {
 
     return (
         <>
+            <BookForm
+                loadBook={loadBook}
+                isModalOpen={isModalOpen}
+                setIsModalOpen={setIsModalOpen}
+            />
             <Table
                 columns={columns}
                 dataSource={dataBook}

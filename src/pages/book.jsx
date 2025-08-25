@@ -10,7 +10,6 @@ const BookPage = () => {
     const [pageSize, setPageSize] = useState(5);
     const [total, setTotal] = useState(0);
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         loadBook();
@@ -30,11 +29,6 @@ const BookPage = () => {
 
     return (
         <div style={{ padding: '20px' }}>
-            <BookForm
-                loadBook={loadBook}
-                isModalOpen={isModalOpen}
-                setIsModalOpen={setIsModalOpen}
-            />
             <BookTable
                 dataBook={dataBook}
                 loadBook={loadBook}
