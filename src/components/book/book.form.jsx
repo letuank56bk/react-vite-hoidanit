@@ -173,7 +173,6 @@ const BookForm = (props) => {
                         <Select
                             style={{ width: '100%' }}
                             onChange={(value) => { setCategory(value); }}
-                            // defaultValue='Arts'
                             placeholder="Select a category"
                             options={[
                                 { value: 'Arts', label: 'Arts' },

@@ -1,6 +1,7 @@
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Table, Popconfirm } from 'antd';
 import BookForm from './book.form';
+import CreateBookUncontrolled from './create.book.uncontrolled';
 import ViewBookDetail from './view.book.detail';
 import { useState } from 'react';
 
@@ -108,7 +109,12 @@ const BookTable = (props) => {
 
     return (
         <>
-            <BookForm
+            {/* <BookForm
+                loadBook={loadBook}
+                isModalOpen={isModalOpen}
+                setIsModalOpen={setIsModalOpen}
+            /> */}
+            <CreateBookUncontrolled
                 loadBook={loadBook}
                 isModalOpen={isModalOpen}
                 setIsModalOpen={setIsModalOpen}
