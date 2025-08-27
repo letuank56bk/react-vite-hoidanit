@@ -1,129 +1,115 @@
-import { useState } from "react";
-import { handleUploadFile } from "../../services/api.service";
-import { createBookAPI } from "../../services/api.service";
-import { Button, Input, InputNumber, Modal, notification, Select, Form } from "antd";
+import { Input, notification, Button, Modal, InputNumber, Select, Form } from 'antd';
+import { useEffect, useState } from 'react';
+import { updateBookAPI, handleUploadFile } from '../../services/api.service';
 
-const CreateBookUncontrolled = (props) => {
-
-    const { loadBook, isModalOpen, setIsModalOpen } = props;
+const UpdateBookUnControlled = (props) => {
+    const { isModalUpdateOpen, setIsModalUpdateOpen, dataUpdate, setDataUpdate, loadBook } = props;
     const [selectedFile, setSelectedFile] = useState(null);
     const [preview, setPreview] = useState(null);
 
+    console.log("dataUpdate in uncontrolled:", dataUpdate);
+
     const [form] = Form.useForm();
 
-    /**
- * Handles the submission of the book creation form.
- * - Uploads the book thumbnail.
- * - Calls the API to create a new book with the provided details.
- * - Shows a success notification and reloads the book list on success.
- * - Shows an error notification on failure.
- *
- * @async
- * @function handleSubmitBtn
- * @returns {Promise<void>} Resolves when the submission process is complete.
- */
+    useEffect(() => {
+        if (dataUpdate) {
+            form.setFieldsValue({
+                Id: dataUpdate._id,
+                mainText: dataUpdate.mainText,
+                author: dataUpdate.author,
+                price: dataUpdate.price,
+                quantity: dataUpdate.quantity,
+                category: dataUpdate.category,
+            });
+            if (dataUpdate.thumbnail) {
+                setPreview(`${import.meta.env.VITE_BACKEND_URL}/images/book/${dataUpdate.thumbnail}`);
+            } else {
+                setPreview(null);
+            }
+        }
+    }, [dataUpdate, form]);
+
     const handleSubmitBtn = async (values) => {
-        if (!selectedFile) {
+        //không có ảnh preview + không có file => return
+        if (!selectedFile && !preview) {
             notification.error({
-                message: "Error create book",
+                message: "Error update book",
                 description: "Vui lòng upload ảnh thumbnail"
             })
             return;
         }
 
-        const uploadedThumbnail = await handleUpdateThumbnail();
-        const { mainText, author, price, quantity, category } = values;
-        const res = await createBookAPI(mainText, author, price, quantity, category, uploadedThumbnail);
-
-        if (res.data) {
-            notification.success({
-                message: 'Success',
-                description: 'Create book successfully!'
-            });
-            // After creating book successfully, re-load book list and reset/ close modal
-            resetAndCloseModal();
-            await loadBook();
+        let newThumbnail = "";
+        //có ảnh preview và không có file => không upload file
+        if (!selectedFile && preview) {
+            //do nothing
+            newThumbnail = dataUpdate.thumbnail;
         } else {
-            notification.error({
-                message: 'Error',
-                description: JSON.stringify(res.message || 'Failed to create book')
-            });
+            //có ảnh preview và có file => upload file
+            const resUpload = await handleUploadFile(selectedFile, "book");
+            if (resUpload.data) {
+                //success
+                newThumbnail = resUpload.data.fileUploaded;
+            } else {
+                //failed
+                notification.error({
+                    message: "Error upload file",
+                    description: JSON.stringify(resUpload.message)
+                });
+                return;
+            }
         }
+
+        //step 2: update book
+        await updateBook(newThumbnail, values);
     }
 
-    /**
- * Handles the upload of a selected thumbnail file for a book.
- * 
- * This function uploads the selected file using the `handleUploadFile` API,
- * and returns the uploaded file information if successful.
- * If the upload fails, it displays an error notification.
- *
- * @async
- * @function handleUpdateThumbnail
- * @returns {Promise<Object|undefined>} Returns the uploaded file information (`fileUploaded`) if successful, otherwise `undefined`.
- */
-    const handleUpdateThumbnail = async () => {
-        /**
-         * Assign the value to the variable
-         * Can't use useState because it's async function 
-         * if we use useState, the value will be updated in the next render
-         * --> https://stackoverflow.com/questions/54069253/react-usestate-hook-not-updating-immediately
-         * thumbnail is required in createBookAPI, so if not get the value (or delay), we can't create book
-         */
-        const resUpload = await handleUploadFile(selectedFile, 'book');
-
-        if (resUpload.data) {
-            return (resUpload.data.fileUploaded); // fileUploaded is the key that response from backend
+    const updateBook = async (newThumbnail, form_values) => {
+        const { Id, mainText, author, price, quantity, category } = form_values;
+        const res = await updateBookAPI(Id, mainText, author, price, quantity, category, newThumbnail)
+        if (res.data) {
+            resetAndCloseModal()
+            await loadBook();
+            notification.success({
+                message: "Update book",
+                description: "Cập nhật thành công",
+            })
         } else {
             notification.error({
-                message: 'Error',
-                description: JSON.stringify(resUpload.message || 'Failed to upload file')
-            });
-            return;
+                message: "Error update book",
+                description: JSON.stringify(res.message),
+            })
         }
     }
 
     const resetAndCloseModal = () => {
         form.resetFields();
-        setSelectedFile(null);
-        setPreview(null);
-        setIsModalOpen(false);
+        setDataUpdate(null); // Clear dataUpdate to avoid issues when reopening the modal (no data display)
+        setIsModalUpdateOpen(false);
     }
 
-    const handleOnChangeFile = (event) => {
+    const handleOnChangeFile = async (event) => {
+        console.log("File changed");
         if (!event.target.files || event.target.files.length === 0) {
-            setSelectedFile(null);
-            setPreview(null);
-            return;
+            return
         }
-        // I've kept this example simple by using the first image instead of multiple
         const file = event.target.files[0];
         if (file) {
-            setSelectedFile(file);
-            setPreview(URL.createObjectURL(file))
+            setSelectedFile(file); // get name of the selected file from local
+            setPreview(URL.createObjectURL(file)); // Create a preview URL for the selected file from local
         }
     }
 
     return (
         <div className="user-form" style={{ margin: '20px 0' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <h3>Table Books</h3>
-                    <Button
-                        type="primary"
-                        onClick={() => setIsModalOpen(true)}
-                    >Create Book</Button>
-                </div>
-            </div>
-
             <Modal
-                title="Create Book Uncontrolled"
+                title="Update Book"
                 closable={{ 'aria-label': 'Custom Close Button' }}
-                open={isModalOpen} // Control the visibility of the modal
-                onOk={() => form.submit()} // Action when click "Create" button --> call to onFinish of Form
+                open={isModalUpdateOpen} // Control the visibility of the modal
+                onOk={() => form.submit()} // Action when click "Create" button
                 onCancel={() => resetAndCloseModal()} // Action when click "X" button or outside the modal
                 maskClosable={false} // Prevent closing by clicking outside the modal
-                okText="Create"
+                okText="Update"
             >
                 <Form
                     form={form}
@@ -131,6 +117,15 @@ const CreateBookUncontrolled = (props) => {
                     layout="vertical"
                 >
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                        <Form.Item
+                            name="Id"
+                            label="ID"
+                            rules={[{
+                                required: true,
+                            }]}
+                        >
+                            <Input disabled />
+                        </Form.Item>
                         <Form.Item
                             name="mainText"
                             label="Main Text"
@@ -234,6 +229,5 @@ const CreateBookUncontrolled = (props) => {
             </Modal >
         </div >
     );
-}
-
-export default CreateBookUncontrolled;
+};
+export default UpdateBookUnControlled;

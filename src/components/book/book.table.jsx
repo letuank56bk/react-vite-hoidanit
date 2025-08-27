@@ -4,6 +4,8 @@ import BookForm from './book.form';
 import CreateBookUncontrolled from './create.book.uncontrolled';
 import ViewBookDetail from './view.book.detail';
 import { useState } from 'react';
+import UpdateBookControl from './update.book.control';
+import UpdateBookUnControlled from './update.book.uncontrolled';
 
 const BookTable = (props) => {
     const { dataBook, loadBook, current, pageSize, total, setCurrent, setPageSize } = props;
@@ -12,9 +14,12 @@ const BookTable = (props) => {
     const [isDetailOpen, setIsDetailOpen] = useState(false);
     const [dataDetail, setDataDetail] = useState();
 
-    // Modal state to control form visibility
+    // Create Modal state to control form visibility
     const [isModalOpen, setIsModalOpen] = useState(false);
 
+    // Update Modal state to control form visibility
+    const [isModalUpdateOpen, setIsModalUpdateOpen] = useState(false);
+    const [dataUpdate, setDataUpdate] = useState();
 
     const formatter = new Intl.NumberFormat('vi-VN', {
         style: 'currency',
@@ -74,7 +79,8 @@ const BookTable = (props) => {
                         <EditOutlined
                             style={{ cursor: "pointer", color: "orange" }}
                             onClick={() => {
-                                alert('Not implemented edit function yet');
+                                setDataUpdate(record);
+                                setIsModalUpdateOpen(true);
                             }} />
                         <Popconfirm
                             placement="left"
@@ -139,6 +145,20 @@ const BookTable = (props) => {
                 dataDetail={dataDetail}
                 setDataDetail={setDataDetail}
                 formatter={formatter}
+            />
+            {/* <UpdateBookControl
+                isModalUpdateOpen={isModalUpdateOpen}
+                setIsModalUpdateOpen={setIsModalUpdateOpen}
+                dataUpdate={dataUpdate}
+                setDataUpdate={setDataUpdate}
+                loadBook={loadBook}
+            /> */}
+            <UpdateBookUnControlled
+                isModalUpdateOpen={isModalUpdateOpen}
+                setIsModalUpdateOpen={setIsModalUpdateOpen}
+                dataUpdate={dataUpdate}
+                setDataUpdate={setDataUpdate}
+                loadBook={loadBook}
             />
         </>
     );
