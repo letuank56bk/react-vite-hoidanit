@@ -95,7 +95,6 @@ const UpdateBookControl = (props) => {
     }
 
     const handleOnChangeFile = async (event) => {
-        console.log("File changed");
         if (!event.target.files || event.target.files.length === 0) {
             return
         }

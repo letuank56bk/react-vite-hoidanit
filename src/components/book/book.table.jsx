@@ -1,11 +1,12 @@
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import { Table, Popconfirm } from 'antd';
+import { Table, Popconfirm, notification } from 'antd';
 import BookForm from './book.form';
 import CreateBookUncontrolled from './create.book.uncontrolled';
 import ViewBookDetail from './view.book.detail';
 import { useState } from 'react';
 import UpdateBookControl from './update.book.control';
 import UpdateBookUnControlled from './update.book.uncontrolled';
+import { deleteBookAPI } from '../../services/api.service';
 
 const BookTable = (props) => {
     const { dataBook, loadBook, current, pageSize, total, setCurrent, setPageSize } = props;
@@ -25,6 +26,22 @@ const BookTable = (props) => {
         style: 'currency',
         currency: 'VND',
     });
+
+    const handleDeleteBook = async (_id) => {
+        const res = await deleteBookAPI(_id);
+        if (res && res.data) {
+            notification.success({
+                message: 'Success',
+                description: 'Create book successfully!'
+            });
+            await loadBook();
+        } else {
+            notification.error({
+                message: 'Error',
+                description: JSON.stringify(res.message || 'Failed to create book')
+            });
+        }
+    }
 
     const columns = [
         {
@@ -88,7 +105,7 @@ const BookTable = (props) => {
                             description="Do you really want to delete this book?"
                             okText="Yes"
                             cancelText="No"
-                            onConfirm={() => alert('Not implemented delete function yet')}
+                            onConfirm={() => handleDeleteBook(record._id)}
                         >
                             <DeleteOutlined style={{ cursor: "pointer", color: "red" }} />
                         </Popconfirm>

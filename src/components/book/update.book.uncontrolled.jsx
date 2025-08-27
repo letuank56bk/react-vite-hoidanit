@@ -6,9 +6,6 @@ const UpdateBookUnControlled = (props) => {
     const { isModalUpdateOpen, setIsModalUpdateOpen, dataUpdate, setDataUpdate, loadBook } = props;
     const [selectedFile, setSelectedFile] = useState(null);
     const [preview, setPreview] = useState(null);
-
-    console.log("dataUpdate in uncontrolled:", dataUpdate);
-
     const [form] = Form.useForm();
 
     useEffect(() => {
@@ -89,7 +86,6 @@ const UpdateBookUnControlled = (props) => {
     }
 
     const handleOnChangeFile = async (event) => {
-        console.log("File changed");
         if (!event.target.files || event.target.files.length === 0) {
             return
         }
