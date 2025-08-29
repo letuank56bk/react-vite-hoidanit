@@ -1,3 +1,4 @@
+import { set } from "nprogress";
 import UserForm from "../components/user/user.form";
 import UserTable from "../components/user/user.table";
 import { fetchAllUsersAPI } from '../services/api.service';
@@ -14,6 +15,9 @@ const UserPage = () => {
     useEffect(() => {
         loadUser();
     }, [current, pageSize]); // Anytime current or pageSize changes, loadUser will be called
+    /**
+     * Xử lý lỗi eslint cảnh bảo - xem lại video 113 để hiểu rõ hơn
+     */
 
     const loadUser = async () => {
         const res = await fetchAllUsersAPI(current, pageSize);

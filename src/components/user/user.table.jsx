@@ -4,15 +4,15 @@ import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import UserUpdateModal from './update.user.modal';
 import ViewUserDetail from './view.user.detail';
 import { deleteUserAPI } from '../../services/api.service';
+import { set } from 'nprogress';
 
 const UserTable = (props) => {
     const { dataUser, loadUser, current, pageSize, total, setCurrent, setPageSize } = props;
-
     const [isModalUpdateOpen, setIsModalUpdateOpen] = useState(false);
     const [dataUpdate, setDataUpdate] = useState();
-
     const [isDetailOpen, setIsDetailOpen] = useState(false);
     const [dataDetail, setDataDetail] = useState();
+    const [loadingUserTable, setLoadingUserTable] = useState(false);
 
     const handleDeleteUser = async (_id) => {
         const res = await deleteUserAPI(_id);
@@ -21,7 +21,9 @@ const UserTable = (props) => {
                 message: "Delete user",
                 description: "Xóa user thành công",
             });
+            setLoadingUserTable(true);
             await loadUser(); // Reload user data
+            setLoadingUserTable(false);
         } else {
             notification.error({
                 message: "Error delete user",
@@ -118,6 +120,7 @@ const UserTable = (props) => {
                         showTotal: (total, range) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
                     }}
                 onChange={onChange}
+                loading={loadingUserTable}
             />
             <UserUpdateModal
                 isModalUpdateOpen={isModalUpdateOpen}
@@ -125,6 +128,8 @@ const UserTable = (props) => {
                 dataUpdate={dataUpdate}
                 setDataUpdate={setDataUpdate}
                 loadUser={loadUser}
+                loadingUserTable={loadingUserTable}
+                setLoadingUserTable={setLoadingUserTable}
             />
             <ViewUserDetail
                 isDetailOpen={isDetailOpen}

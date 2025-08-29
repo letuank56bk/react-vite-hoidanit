@@ -1,11 +1,10 @@
-  import { Input, notification } from 'antd';
+import { Input, notification } from 'antd';
 import { Modal } from 'antd';
 import { useEffect, useState } from 'react';
 import { updateUserAPI } from '../../services/api.service';
 
 const UpdateModalUser = (props) => {
-    const { loadUser, isModalUpdateOpen, setIsModalUpdateOpen, dataUpdate, setDataUpdate } = props;
-
+    const { loadUser, isModalUpdateOpen, setIsModalUpdateOpen, dataUpdate, setDataUpdate, setLoadingUserTable } = props;
     const [fullName, setFullName] = useState('');
     const [id, setId] = useState('');
     const [phone, setPhone] = useState('');
@@ -26,8 +25,10 @@ const UpdateModalUser = (props) => {
                 message: "Update user",
                 description: "Cập nhật thành công",
             })
-            resetAndCloseModal(); // Reset form fields and close modal
+            resetAndCloseModal(); // Reset form fields and close modal3
+            setLoadingUserTable(true);
             await loadUser(); // Reload user data
+            setLoadingUserTable(false);
         } else {
             notification.error({
                 message: "Error update user",
@@ -53,7 +54,7 @@ const UpdateModalUser = (props) => {
             onOk={() => handleSubmitBtn()}
             onCancel={() => resetAndCloseModal()}
             maskClosable={false} // Prevent closing by clicking outside the modal
-            okText="Create"
+            okText="Update"
         >
             <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
                 <div>
